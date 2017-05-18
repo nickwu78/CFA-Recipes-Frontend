@@ -1,21 +1,45 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
+import IngredientList from './IngredientList';
+import IngredientForm from './IngredientForm';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ingredients: []
+    }
+  };
+
+  componentDidMount() {
+    this.getIngredientList();
+  };
+
+  getIngredientList() {
+    const URL = 'http://yamagucci.herokuapp.com/api/ingredients?key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNob3VoZWkueWFtYXVjaGlAbGl2ZS5jb20iLCJpYXQiOjE0OTQ5OTMxMTV9.G0ctQghRRAqaZiGSZyT5Oi-YXUUfb3UsYQpsmMaVA0k'
+    axios.get(URL)
+      .then((response) => {
+      console.log(response);
+      this.setState({ ingredients: response.data });
+      })
+      .catch(function (error) {
+      console.log(error);
+      })
+  }
+
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div>
+        <h1>Recipes Frontend</h1>
+        <IngredientForm getIngredientList={() => this.getIngredientList()} />
+        {this.state.ingredients.length < 1 ? <p>Loading...</p> : <IngredientList ingredients={this.state.ingredients}
+         />}
       </div>
     );
   }
 }
 
 export default App;
+
+// {!this.state.ingredients ? <p>Loading...</p> : this.state.ingredients.map((ingredient, i) => <li key={i}> {ingredient.name} </li>)}
